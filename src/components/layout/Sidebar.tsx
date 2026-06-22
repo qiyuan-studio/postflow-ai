@@ -1,82 +1,82 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, FileText, BarChart3, Calendar, Settings,
-  Share2, Bot, Menu, X, ChevronRight
-} from 'lucide-react';
-import { useState } from 'react';
+  LayoutDashboard,
+  FileText,
+  Calendar,
+  BarChart3,
+  Settings,
+  Wand2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState } from "react";
 
 const navItems = [
-  { href: '/dashboard', label: '仪表盘', icon: LayoutDashboard },
-  { href: '/dashboard/content', label: '内容管理', icon: FileText },
-  { href: '/dashboard/calendar', label: '发布日历', icon: Calendar },
-  { href: '/dashboard/analytics', label: '数据分析', icon: BarChart3 },
+  { href: "/dashboard", label: "仪表盘", icon: LayoutDashboard },
+  { href: "/dashboard/content", label: "内容管理", icon: FileText },
+  { href: "/dashboard/content/new", label: "AI生成", icon: Wand2 },
+  { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
+  { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },
+  { href: "/dashboard/settings", label: "设置", icon: Settings },
 ];
 
-const secondaryItems = [
-  { href: '/dashboard/settings', label: '设置', icon: Settings },
-];
-
-export default function Sidebar() {
+export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={cn(
-      "fixed left-0 top-0 z-40 h-screen bg-white border-r border-gray-200 transition-all duration-300",
-      collapsed ? "w-16" : "w-64"
-    )}>
-      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+    <aside
+      className={`bg-white border-r border-primary-100 flex flex-col transition-all duration-300 ${
+        collapsed ? "w-16" : "w-60"
+      }`}
+    >
+      {/* Logo */}
+      <div className="p-4 border-b border-primary-100 flex items-center gap-3">
+        <div className="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-700 rounded-lg flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-bold text-sm">P</span>
+        </div>
         {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-              <Share2 className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-lg bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-              PostFlow
-            </span>
-          </Link>
+          <span className="font-bold text-primary-900 text-lg">PostFlow</span>
         )}
-        <button onClick={() => setCollapsed(!collapsed)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <X className="w-4 h-4" />}
-        </button>
       </div>
 
-      <nav className="p-2 space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link key={item.href} href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 isActive
-                  ? "bg-primary-50 text-primary-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              )}>
-              <item.icon className={cn("w-5 h-5 shrink-0", isActive ? "text-primary-500" : "text-gray-400")} />
-              {!collapsed && <span>{item.label}</span>}
+                  ? "bg-accent-50 text-accent-700 font-medium"
+                  : "text-primary-600 hover:bg-primary-50 hover:text-primary-800"
+              }`}
+              title={collapsed ? item.label : undefined}
+            >
+              <item.icon className="w-5 h-5 flex-shrink-0" />
+              {!collapsed && <span className="text-sm">{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
-      <div className="absolute bottom-0 left-0 right-0 p-2 border-t border-gray-100">
-        {secondaryItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
-                isActive ? "bg-gray-100 text-gray-900" : "text-gray-500 hover:bg-gray-50"
-              )}>
-              <item.icon className="w-5 h-5 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+      {/* Collapse button */}
+      <div className="p-3 border-t border-primary-100">
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="w-full flex items-center justify-center p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all"
+        >
+          {collapsed ? (
+            <ChevronRight className="w-4 h-4" />
+          ) : (
+            <ChevronLeft className="w-4 h-4" />
+          )}
+        </button>
       </div>
     </aside>
   );

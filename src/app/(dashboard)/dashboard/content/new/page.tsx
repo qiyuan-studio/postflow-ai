@@ -1,147 +1,275 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Sparkles, Send, Image, FileText, Globe, ArrowLeft, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Wand2, Sparkles, Loader2, Check, Copy } from "lucide-react";
+import Link from "next/link";
 
 const platforms = [
-  { id: 'xiaohongshu', label: '小红书', color: 'bg-red-50 text-red-700 border-red-200' },
-  { id: 'douyin', label: '抖音', color: 'bg-gray-50 text-gray-700 border-gray-200' },
-  { id: 'x', label: 'X/Twitter', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  { id: 'reddit', label: 'Reddit', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-  { id: 'tiktok', label: 'TikTok', color: 'bg-gray-50 text-gray-700 border-gray-200' },
+  { id: "xiaohongshu", label: "小红书", emoji: "📕" },
+  { id: "douyin", label: "抖音", emoji: "🎵" },
+  { id: "twitter", label: "X (Twitter)", emoji: "🐦" },
+  { id: "reddit", label: "Reddit", emoji: "👽" },
+  { id: "tiktok", label: "TikTok", emoji: "📱" },
 ];
 
-const tones = [
-  { id: 'professional', label: '专业正式' },
-  { id: 'casual', label: '轻松活泼' },
-  { id: 'humorous', label: '幽默风趣' },
-  { id: 'inspirational', label: '励志鼓舞' },
-];
+const tones = ["专业", "轻松", "幽默", "激励", "教育", "新闻"];
+const styles = ["信息丰富", "故事性", "列表式", "问答式", "教程式"];
 
 export default function NewContentPage() {
-  const [topic, setTopic] = useState('');
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [tone, setTone] = useState('casual');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedContent, setGeneratedContent] = useState<Record<string, {title: string; content: string; hashtags: string[]}>>({});
+  const router = useRouter();
+  const [topic, setTopic] = useState("");
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["xiaohongshu"]);
+  const [tone, setTone] = useState("专业");
+  const [style, setStyle] = useState("信息丰富");
+  const [generating, setGenerating] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const togglePlatform = (id: string) => {
-    setSelectedPlatforms(prev => 
-      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+    setSelectedPlatforms((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
     );
   };
 
   const handleGenerate = async () => {
-    if (!topic || selectedPlatforms.length === 0) return;
-    setIsGenerating(true);
+    if (!topic.trim()) return;
+    if (selectedPlatforms.length === 0) {
+      setError("请至少选择一个平台");
+      return;
+    }
 
-    // Simulate AI generation (will be replaced with actual API call)
-    setTimeout(() => {
-      const mockContent: Record<string, {title: string; content: string; hashtags: string[]}> = {};
-      selectedPlatforms.forEach(p => {
-        mockContent[p] = {
-          title: `${topic} - 你不可不知的秘诀`,
-          content: `今天来和大家聊聊关于${topic}的那些事...\n\n这是我总结的几个关键点：\n1. 深入了解用户需求\n2. 持续输出高质量内容\n3. 与粉丝保持互动\n4. 数据分析优化策略\n\n#${topic} #干货分享 #成长`,
-          hashtags: [`#${topic}`, '#干货分享', '#实用技巧', '#效率提升'],
-        };
+    setGenerating(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/content/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: topic.trim(),
+          platforms: selectedPlatforms,
+          tone,
+          style,
+        }),
       });
-      setGeneratedContent(mockContent);
-      setIsGenerating(false);
-    }, 2000);
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "生成失败");
+      }
+
+      const data = await res.json();
+      setResult(data.content || data);
+    } catch (err: any) {
+      setError(err.message || "AI 内容生成失败，请检查 API Key 配置");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleSave = async (content: string) => {
+    try {
+      await fetch("/api/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: topic,
+          content,
+          platforms: selectedPlatforms,
+          aiGenerated: true,
+          aiPrompt: topic,
+        }),
+      });
+      router.push("/dashboard/content");
+      router.refresh();
+    } catch {
+      alert("保存失败");
+    }
+  };
+
+  const copyToClipboard = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard/content" className="p-2 rounded-xl hover:bg-gray-100 text-gray-400">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">AI 内容创作</h1>
-          <p className="text-gray-500 mt-1">输入主题，AI自动生成适配各平台的内容</p>
-        </div>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-primary-900">AI 内容生成器</h1>
+        <p className="text-primary-500 mt-1">
+          用AI快速创建多平台社交媒体内容
+        </p>
       </div>
 
-      {/* Step 1: Input */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+      {/* Input Form */}
+      <div className="bg-white rounded-2xl border border-primary-100 p-6 space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">输入内容主题</label>
-          <input type="text" value={topic} onChange={e => setTopic(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-            placeholder="例如：AI工具推荐、社交媒体运营技巧、产品测评..."
+          <label className="block text-sm font-medium text-primary-700 mb-2">
+            内容主题
+          </label>
+          <input
+            type="text"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            placeholder="例如：AI如何改变内容创作行业..."
+            className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:ring-2 focus:ring-accent-500 focus:border-transparent outline-none transition-all"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">选择发布平台</label>
+          <label className="block text-sm font-medium text-primary-700 mb-2">
+            目标平台
+          </label>
           <div className="flex flex-wrap gap-2">
-            {platforms.map(p => (
-              <button key={p.id} onClick={() => togglePlatform(p.id)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+            {platforms.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => togglePlatform(p.id)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                   selectedPlatforms.includes(p.id)
-                    ? 'bg-primary-50 text-primary-700 border-primary-300 shadow-sm'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                }`}>
-                {p.label}
+                    ? "bg-accent-600 text-white"
+                    : "bg-primary-100 text-primary-600 hover:bg-primary-200"
+                }`}
+              >
+                {p.emoji} {p.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">语气风格</label>
-          <div className="flex flex-wrap gap-2">
-            {tones.map(t => (
-              <button key={t.id} onClick={() => setTone(t.id)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                  tone === t.id
-                    ? 'bg-accent-50 text-accent-700 border-accent-300 shadow-sm'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                }`}>
-                {t.label}
-              </button>
-            ))}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-2">
+              语气
+            </label>
+            <select
+              value={tone}
+              onChange={(e) => setTone(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:ring-2 focus:ring-accent-500 outline-none"
+            >
+              {tones.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-2">
+              风格
+            </label>
+            <select
+              value={style}
+              onChange={(e) => setStyle(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:ring-2 focus:ring-accent-500 outline-none"
+            >
+              {styles.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <button onClick={handleGenerate} disabled={!topic || selectedPlatforms.length === 0 || isGenerating}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-6 py-3 rounded-xl font-semibold text-sm hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all">
-          {isGenerating ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> AI生成中...</>
+        {error && (
+          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <button
+          onClick={handleGenerate}
+          disabled={generating || !topic.trim()}
+          className="w-full py-3 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {generating ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              AI 正在创作...
+            </>
           ) : (
-            <><Sparkles className="w-4 h-4" /> AI生成内容</>
+            <>
+              <Sparkles className="w-5 h-5" />
+              开始生成
+            </>
           )}
         </button>
       </div>
 
-      {/* Step 2: Generated Content */}
-      {Object.keys(generatedContent).length > 0 && (
+      {/* Results */}
+      {result && Array.isArray(result) && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">生成结果</h2>
-          {Object.entries(generatedContent).map(([platform, content]) => (
-            <div key={platform} className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 className="text-lg font-semibold text-primary-900 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-accent-600" />
+            生成结果
+          </h2>
+          {result.map((item: any, index: number) => (
+            <div
+              key={index}
+              className="bg-white rounded-2xl border border-primary-100 p-6"
+            >
               <div className="flex items-center justify-between mb-4">
-                <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium">
-                  {platforms.find(p => p.id === platform)?.label || platform}
+                <span className="px-3 py-1 bg-accent-50 text-accent-700 rounded-full text-sm font-medium">
+                  {platforms.find((p) => p.id === item.platform)?.emoji}{" "}
+                  {platforms.find((p) => p.id === item.platform)?.label ||
+                    item.platform}
                 </span>
-                <button className="text-sm text-primary-600 font-medium hover:text-primary-700">编辑</button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => copyToClipboard(item.content, index)}
+                    className="p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                  >
+                    {copiedIndex === index ? (
+                      <Check className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">{content.title}</h3>
-              <p className="text-sm text-gray-600 whitespace-pre-line mb-3">{content.content}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {content.hashtags.map((tag, i) => (
-                  <span key={i} className="text-xs text-primary-600 bg-primary-50 px-2 py-1 rounded-full">{tag}</span>
-                ))}
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-end gap-2">
-                <button className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50">保存草稿</button>
-                <button className="px-4 py-2 text-sm bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl hover:shadow-lg">发布</button>
+              <p className="text-primary-700 whitespace-pre-wrap text-sm leading-relaxed">
+                {item.content}
+              </p>
+              {item.hashtags?.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {item.hashtags.map((tag: string, i: number) => (
+                    <span
+                      key={i}
+                      className="text-xs px-2 py-1 bg-accent-50 text-accent-600 rounded-full"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4 pt-4 border-t border-primary-100 flex gap-2">
+                <button
+                  onClick={() => handleSave(item.content)}
+                  className="px-4 py-2 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 transition-colors"
+                >
+                  保存为草稿
+                </button>
+                <button
+                  onClick={() => copyToClipboard(item.content, index)}
+                  className="px-4 py-2 border border-primary-200 text-primary-600 rounded-xl text-sm font-medium hover:bg-primary-50 transition-colors"
+                >
+                  复制内容
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <div className="text-center">
+        <Link
+          href="/dashboard/content"
+          className="text-sm text-accent-600 hover:underline"
+        >
+          ← 返回内容管理
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,91 +1,173 @@
-'use client';
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
+import { FileText, Calendar, BarChart3, Wand2 } from "lucide-react";
 
-import { FileText, Share2, TrendingUp, Users, ArrowUp, ArrowDown } from 'lucide-react';
+export default async function DashboardPage() {
+  const session = await auth();
+  const userId = session?.user?.id;
 
-const stats = [
-  { label: '总发布数', value: '128', change: '+12%', up: true, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { label: '总曝光', value: '45.2万', change: '+23%', up: true, icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
-  { label: '总互动', value: '8,432', change: '+18%', up: true, icon: Share2, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { label: '粉丝增长', value: '+1,284', change: '-5%', up: false, icon: Users, color: 'text-orange-600', bg: 'bg-orange-50' },
-];
+  const [totalPosts, scheduledPosts, publishedPosts, draftPosts] =
+    await Promise.all([
+      prisma.contentPost.count({ where: { userId } }),
+      prisma.contentPost.count({ where: { userId, status: "scheduled" } }),
+      prisma.contentPost.count({ where: { userId, status: "published" } }),
+      prisma.contentPost.count({ where: { userId, status: "draft" } }),
+    ]);
 
-const recentPosts = [
-  { title: 'AI工具推荐2025', platform: '小红书', status: '已发布', time: '2小时前', engagement: '1,284' },
-  { title: '如何用ChatGPT提高效率', platform: '抖音', status: '已发布', time: '昨天', engagement: '3,421' },
-  { title: '社交媒体运营技巧', platform: 'X/Twitter', status: '已发布', time: '3天前', engagement: '892' },
-  { title: '新产品发布预告', platform: 'Reddit', status: '已预约', time: '明天 10:00', engagement: '-' },
-];
+  const recentPosts = await prisma.contentPost.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      platforms: true,
+      createdAt: true,
+    },
+  });
 
-export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">仪表盘</h1>
-        <p className="text-gray-500 mt-1">欢迎回来，这是你的内容概况</p>
+        <h1 className="text-2xl font-bold text-primary-900">
+          欢迎回来，{session?.user?.name || "用户"}
+        </h1>
+        <p className="text-primary-500 mt-1">这是你的内容管理概览</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
-              </div>
-              <span className={`inline-flex items-center gap-1 text-xs font-medium ${stat.up ? 'text-green-600' : 'text-red-600'}`}>
-                {stat.up ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                {stat.change}
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
-          </div>
-        ))}
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard label="全部内容" value={totalPosts} icon={FileText} color="blue" />
+        <StatCard label="已发布" value={publishedPosts} icon={BarChart3} color="green" />
+        <StatCard label="待发布" value={scheduledPosts} icon={Calendar} color="purple" />
+        <StatCard label="草稿" value={draftPosts} icon={FileText} color="amber" />
       </div>
 
-      {/* Recent Posts */}
-      <div className="bg-white rounded-2xl border border-gray-100">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-900">最近内容</h2>
-          <button className="text-sm text-primary-600 font-medium hover:text-primary-700">查看全部</button>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link
+          href="/dashboard/content/new"
+          className="p-6 bg-gradient-to-br from-accent-500 to-accent-700 rounded-2xl text-white hover:shadow-lg transition-shadow"
+        >
+          <Wand2 className="w-8 h-8 mb-3" />
+          <h3 className="font-semibold text-lg">AI 生成内容</h3>
+          <p className="text-white/80 text-sm mt-1">用AI快速创建多平台社交媒体内容</p>
+        </Link>
+
+        <Link
+          href="/dashboard/content"
+          className="p-6 bg-white rounded-2xl border border-primary-100 hover:shadow-lg transition-shadow"
+        >
+          <FileText className="w-8 h-8 mb-3 text-primary-600" />
+          <h3 className="font-semibold text-lg text-primary-900">管理内容</h3>
+          <p className="text-primary-500 text-sm mt-1">查看和编辑你的所有内容</p>
+        </Link>
+      </div>
+
+      {/* Recent Content */}
+      <div className="bg-white rounded-2xl border border-primary-100 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-primary-900">最近内容</h2>
+          <Link
+            href="/dashboard/content"
+            className="text-sm text-accent-600 hover:underline"
+          >
+            查看全部 →
+          </Link>
         </div>
-        <div className="divide-y divide-gray-50">
-          {recentPosts.map((post, i) => (
-            <div key={i} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{post.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-400">{post.platform}</span>
-                  <span className="text-gray-300">·</span>
-                  <span className="text-xs text-gray-400">{post.time}</span>
+
+        {recentPosts.length > 0 ? (
+          <div className="space-y-3">
+            {recentPosts.map((post) => (
+              <div
+                key={post.id}
+                className="flex items-center justify-between p-3 bg-primary-50 rounded-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <StatusBadge status={post.status} />
+                  <span className="text-sm text-primary-700">
+                    {post.title || "无标题"}
+                  </span>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">{post.engagement}</span>
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                  post.status === '已发布' ? 'bg-green-50 text-green-700' : 'bg-blue-50 text-blue-700'
-                }`}>
-                  {post.status}
+                <span className="text-xs text-primary-400">
+                  {new Date(post.createdAt).toLocaleDateString("zh-CN")}
                 </span>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Action */}
-      <div className="bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">用AI生成新内容</h3>
-            <p className="text-white/80 text-sm mt-1">输入主题，AI自动生成适配各平台的内容</p>
+            ))}
           </div>
-          <a href="/dashboard/content"
-            className="bg-white text-primary-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg transition-all">
-            开始创作
-          </a>
+        ) : (
+          <div className="text-center py-8 text-primary-400">
+            <p>还没有内容</p>
+            <Link
+              href="/dashboard/content/new"
+              className="text-accent-600 hover:underline text-sm mt-2 inline-block"
+            >
+              用AI创建第一篇内容 →
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  color,
+}: {
+  label: string;
+  value: number;
+  icon: any;
+  color: string;
+}) {
+  const colors: Record<string, string> = {
+    blue: "bg-blue-50 text-blue-600",
+    green: "bg-green-50 text-green-600",
+    purple: "bg-purple-50 text-purple-600",
+    amber: "bg-amber-50 text-amber-600",
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-primary-100 p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-primary-500">{label}</p>
+          <p className="text-2xl font-bold text-primary-900 mt-1">{value}</p>
+        </div>
+        <div className={`p-3 rounded-xl ${colors[color]}`}>
+          <Icon className="w-5 h-5" />
         </div>
       </div>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    draft: "bg-amber-100 text-amber-700",
+    scheduled: "bg-purple-100 text-purple-700",
+    published: "bg-green-100 text-green-700",
+    failed: "bg-red-100 text-red-700",
+  };
+
+  const labels: Record<string, string> = {
+    draft: "草稿",
+    scheduled: "待发布",
+    published: "已发布",
+    failed: "失败",
+  };
+
+  return (
+    <span
+      className={`text-xs px-2 py-1 rounded-full font-medium ${
+        styles[status] || "bg-primary-100 text-primary-600"
+      }`}
+    >
+      {labels[status] || status}
+    </span>
   );
 }

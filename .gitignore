@@ -5,3 +5,9 @@ out/
 .env*.local
 *.log
 .DS_Store
+
+# Environment files
+.env
+.env.*
+*.db
+prisma/*.db

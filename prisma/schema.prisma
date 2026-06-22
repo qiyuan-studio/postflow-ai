@@ -1,0 +1,138 @@
+// PostFlow AI - Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== 用户和认证 =====
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // 关联
+  accounts     Account[]
+  sessions     Session[]
+  platformAccounts PlatformAccount[]
+  contentPosts ContentPost[]
+  subscriptions Subscription[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ===== 平台账号连接 =====
+model PlatformAccount {
+  id              String   @id @default(cuid())
+  userId          String
+  platform        String   // xiaohongshu, douyin, twitter, reddit, tiktok
+  platformUserId  String?
+  platformUserName String?
+  accessToken     String?
+  refreshToken    String?
+  tokenExpiresAt  DateTime?
+  isConnected     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts ContentPost[]
+
+  @@unique([userId, platform])
+}
+
+// ===== 内容帖 =====
+model ContentPost {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String?
+  content         String   // 正文内容（Markdown）
+  imageUrls       String?  // JSON array
+  videoUrls       String?  // JSON array
+  platforms       String   // JSON array - 发布到的平台
+  status          String   @default("draft") // draft, scheduled, published, failed
+  scheduledAt     DateTime?
+  publishedAt     DateTime?
+  aiGenerated     Boolean  @default(false)
+  aiPrompt        String?  // AI生成时的提示词
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platformAccount PlatformAccount?  @relation(fields: [platformAccountId], references: [id])
+  platformAccountId String?
+}
+
+// ===== 订阅 =====
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String
+  plan          String   // free, pro, enterprise
+  status        String   // active, cancelled, expired
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId])
+}
+
+// ===== 分析数据 =====
+model AnalyticsData {
+  id              String   @id @default(cuid())
+  userId          String
+  platform        String
+  date            DateTime
+  followers       Int      @default(0)
+  likes           Int      @default(0)
+  comments        Int      @default(0)
+  shares          Int      @default(0)
+  impressions     Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  @@unique([userId, platform, date])
+}
