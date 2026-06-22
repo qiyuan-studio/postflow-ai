@@ -1,0 +1,82 @@
+{
+  "name": "每周数据分析报告",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "weekly-trigger",
+      "name": "Weekly Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "parameters": {
+        "rule": {
+          "interval": 604800,
+          "triggerAtHour": 10,
+          "triggerAtDay": 1
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.POSTFLOW_API_URL }}/api/open/v1/analytics?days=7",
+        "options": {},
+        "method": "GET",
+        "authentication": "genericCredential",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "get-analytics",
+      "name": "PostFlow AI - 获取分析数据",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "sheetId": "YOUR_SHEET_ID",
+        "range": "A1:E30",
+        "options": {},
+        "operation": "append",
+        "dataMode": "raw",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "platform": "={{ $json.byPlatform.keys()[0] }}",
+            "followers": "={{ $json.summary.totalFollowers }}",
+            "likes": "={{ $json.summary.totalLikes }}",
+            "comments": "={{ $json.summary.totalComments }}",
+            "impressions": "={{ $json.summary.totalImpressions }}"
+          }
+        }
+      },
+      "id": "write-sheet",
+      "name": "Google Sheets 写入",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@postflow.ai",
+        "toEmail": "admin@example.com",
+        "subject": "📊 PostFlow AI 每周数据报告",
+        "text": "本周数据汇总:\n- 总粉丝增长: {{ $json.summary.totalFollowers }}\n- 总点赞: {{ $json.summary.totalLikes }}\n- 总评论: {{ $json.summary.totalComments }}"
+      },
+      "id": "send-email",
+      "name": "发送邮件报告",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "weekly-trigger": {
+      "main": [[{ "node": "get-analytics", "type": "main", "index": 0 }]]
+    },
+    "get-analytics": {
+      "main": [[{ "node": "write-sheet", "type": "main", "index": 0 }]]
+    },
+    "write-sheet": {
+      "main": [[{ "node": "send-email", "type": "main", "index": 0 }]]
+    }
+  }
+}

@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   Wand2,
+  Key,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
   { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },
   { href: "/dashboard/settings", label: "设置", icon: Settings },
+  { href: "/dashboard/api-keys", label: "API密钥", icon: Key },
 ];
 
 export function Sidebar() {

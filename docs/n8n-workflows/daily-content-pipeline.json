@@ -1,0 +1,86 @@
+{
+  "name": "每日 AI 内容自动化流水线",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "parameters": {
+        "rule": {
+          "interval": 86400,
+          "triggerAtHour": 9
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.POSTFLOW_API_URL }}/api/open/v1/content/generate",
+        "options": {},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "topic", "value": "={{ $json.topic }}" },
+            { "name": "platform", "value": "xiaohongshu" },
+            { "name": "tone", "value": "轻松" },
+            { "name": "length", "value": "medium" }
+          ]
+        },
+        "authentication": "genericCredential",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "generate-content",
+      "name": "PostFlow AI - 生成内容",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.POSTFLOW_API_URL }}/api/open/v1/content",
+        "options": {},
+        "method": "POST",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "title", "value": "={{ $json.data.title }}" },
+            { "name": "content", "value": "={{ $json.data.content }}" },
+            { "name": "platforms", "value": "[\"xiaohongshu\"]" }
+          ]
+        },
+        "authentication": "genericCredential",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "create-content",
+      "name": "PostFlow AI - 保存内容",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "text": "✅ 今日内容已自动生成:\n{{ $json.data.title }}",
+        "channel": "content-updates"
+      },
+      "id": "slack-notify",
+      "name": "Slack 通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "schedule-trigger": {
+      "main": [[{ "node": "generate-content", "type": "main", "index": 0 }]]
+    },
+    "generate-content": {
+      "main": [[{ "node": "create-content", "type": "main", "index": 0 }]]
+    },
+    "create-content": {
+      "main": [[{ "node": "slack-notify", "type": "main", "index": 0 }]]
+    }
+  }
+}

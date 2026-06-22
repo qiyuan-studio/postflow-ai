@@ -25,6 +25,8 @@ model User {
   platformAccounts PlatformAccount[]
   contentPosts ContentPost[]
   subscriptions Subscription[]
+  apiKeys      ApiKey[]
+  webhooks     Webhook[]
 }
 
 model Account {
@@ -102,6 +104,8 @@ model ContentPost {
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   platformAccount PlatformAccount?  @relation(fields: [platformAccountId], references: [id])
   platformAccountId String?
+
+  publishLogs PublishLog[]
 }
 
 // ===== 订阅 =====
@@ -135,4 +139,59 @@ model AnalyticsData {
   createdAt       DateTime @default(now())
 
   @@unique([userId, platform, date])
+}
+
+
+// ===== API Keys (开放平台接入) =====
+model ApiKey {
+  id        String   @id @default(cuid())
+  name      String
+  key       String   @unique
+  userId    String
+  lastUsed  DateTime?
+  expiresAt DateTime?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([key])
+}
+
+// ===== Webhook 配置 =====
+model Webhook {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  url       String
+  secret    String?
+  events    String   // JSON array: content.published, content.scheduled, content.failed
+  active    Boolean  @default(true)
+  lastTriggeredAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ===== 发布日志 =====
+model PublishLog {
+  id              String   @id @default(cuid())
+  contentPostId   String
+  platform        String
+  status          String   // pending, publishing, published, failed
+  message         String?
+  platformPostId  String?
+  publishedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  post ContentPost @relation(fields: [contentPostId], references: [id], onDelete: Cascade)
+
+  @@index([contentPostId])
+  @@index([status])
 }

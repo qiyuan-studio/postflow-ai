@@ -1,0 +1,7 @@
+# PostFlow AI - Robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+Sitemap: https://postflow.ai/sitemap.xml
