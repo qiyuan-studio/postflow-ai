@@ -1,0 +1,124 @@
+import Link from 'next/link';
+import { ArrowRight, Sparkles, Share2, BarChart3, Bot, Globe, Zap } from 'lucide-react';
+
+const features = [
+  { icon: Bot, title: 'AI 内容创作', desc: '基于AI自动生成适配各平台风格的文案、图片和视频脚本' },
+  { icon: Share2, title: '一键多平台发布', desc: '同时发布到抖音、小红书、X(Twitter)、Reddit等主流平台' },
+  { icon: BarChart3, title: '智能数据分析', desc: '实时追踪各平台数据，AI自动优化发布策略' },
+  { icon: Globe, title: '跨平台管理', desc: '统一管理所有社交账号，告别来回切换' },
+  { icon: Zap, title: '批量定时发布', desc: '内容日历管理，智能选择最佳发布时间' },
+  { icon: Sparkles, title: 'AI 评论互动', desc: 'AI自动回复评论，提升粉丝互动率' },
+];
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
+                <Share2 className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-xl bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
+                PostFlow
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">
+                登录
+              </Link>
+              <Link href="/register"
+                className="text-sm font-medium bg-gradient-to-r from-primary-500 to-accent-500 text-white px-5 py-2 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                免费开始
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-50 text-primary-700 rounded-full text-sm font-medium mb-8">
+              <Sparkles className="w-4 h-4" />
+              AI 驱动的下一代社交媒体管理工具
+            </div>
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+              用AI创作内容，
+              <span className="bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent">一键发布全网</span>
+            </h1>
+            <p className="text-xl text-gray-500 mb-10 max-w-2xl mx-auto">
+              PostFlow AI 帮你自动生成适配各平台的内容，定时发布到抖音、小红书、X、Reddit，
+              智能分析数据，让你专注于创作本身。
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <Link href="/register"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-8 py-3.5 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-primary-500/25 transition-all">
+                免费开始使用
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link href="#features"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-all">
+                了解更多
+              </Link>
+            </div>
+          </div>
+        </div>
+        {/* Gradient decoration */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-b from-primary-500/5 via-accent-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+      </section>
+
+      {/* Features */}
+      <section id="features" className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              强大而简单的功能
+            </h2>
+            <p className="text-lg text-gray-500">你需要的社交媒体管理工具，全都在这里</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((f, i) => (
+              <div key={i} className="group p-8 bg-gray-50 rounded-2xl hover:bg-gradient-to-br hover:from-primary-50 hover:to-accent-50 transition-all hover:shadow-lg">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-sm">
+                  <f.icon className="w-6 h-6 text-primary-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{f.title}</h3>
+                <p className="text-gray-500 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-accent-700 rounded-3xl p-12 sm:p-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              准备好提升你的社交媒体效率了吗？
+            </h2>
+            <p className="text-primary-100 text-lg mb-8 max-w-xl mx-auto">
+              加入 PostFlow，用AI让你的内容创作效率提升10倍
+            </p>
+            <Link href="/register"
+              className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-3.5 rounded-xl font-semibold text-lg hover:shadow-xl transition-all">
+              免费开始使用
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-400">
+          © 2025 PostFlow AI. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  );
+}
