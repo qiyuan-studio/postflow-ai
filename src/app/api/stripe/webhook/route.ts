@@ -2,11 +2,18 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-03-31" as any,
-});
+const hasStripe = !!process.env.STRIPE_SECRET_KEY;
+
+const stripe = hasStripe
+  ? new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-03-31" as any })
+  : null;
 
 export async function POST(request: Request) {
+  // In mock mode, webhook is a no-op
+  if (!stripe) {
+    return NextResponse.json({ received: true, mode: "mock" });
+  }
+
   const body = await request.text();
   const signature = request.headers.get("stripe-signature") || "";
 

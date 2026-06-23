@@ -67,7 +67,7 @@ export default function SettingsPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setMessage({ type: 'error', text: '创建支付会话失败，请稍后重试' });
+        setMessage({ type: "error", text: '创建支付会话失败，请稍后重试' });
       }
     } catch (e) {
       setMessage({ type: 'error', text: '网络错误，请检查连接' });

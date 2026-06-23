@@ -11,6 +11,9 @@ const platforms = [
   { id: "twitter", label: "X (Twitter)", emoji: "🐦" },
   { id: "reddit", label: "Reddit", emoji: "👽" },
   { id: "tiktok", label: "TikTok", emoji: "📱" },
+  { id: "zhihu", label: "知乎", emoji: "💡" },
+  { id: "weixin", label: "公众号", emoji: "📰" },
+  { id: "weibo", label: "微博", emoji: "🔴" },
 ];
 
 const tones = ["专业", "轻松", "幽默", "激励", "教育", "新闻"];

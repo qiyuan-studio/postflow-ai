@@ -1,7 +1,7 @@
 import { AIContentRequest, AIContentResponse } from '@/types';
 
 export async function generateContent(request: AIContentRequest): Promise<AIContentResponse> {
-  const response = await fetch('/api/ai/generate', {
+  const response = await fetch('/api/open/v1/content/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
