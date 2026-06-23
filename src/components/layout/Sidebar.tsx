@@ -10,6 +10,7 @@ import {
   Settings,
   Wand2,
   Key,
+  PenLine,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const navItems = [
   { href: "/dashboard/content/new", label: "AI生成", icon: Wand2 },
   { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
   { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },
+  { href: "/dashboard/blog", label: "博客生成", icon: PenLine },
   { href: "/dashboard/settings", label: "设置", icon: Settings },
   { href: "/dashboard/api-keys", label: "API密钥", icon: Key },
 ];

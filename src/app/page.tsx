@@ -26,6 +26,9 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex items-center gap-4">
+              <Link href="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">
+                定价
+              </Link>
               <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">
                 登录
               </Link>
@@ -90,6 +93,65 @@ export default function LandingPage() {
                 <p className="text-gray-500 leading-relaxed">{f.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              简单透明的定价
+            </h2>
+            <p className="text-lg text-gray-500">选择适合你的计划，随时升级或取消</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Free */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900">免费版</h3>
+              <p className="text-4xl font-bold text-gray-900 mt-4">¥0</p>
+              <p className="text-sm text-gray-500 mt-1">适合个人试用</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>1个平台连接</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>10篇AI生成/月</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>基础内容管理</li>
+                <li className="flex items-center gap-2 text-sm text-gray-400"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>无数据分析</li>
+                <li className="flex items-center gap-2 text-sm text-gray-400"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>无API接入</li>
+              </ul>
+              <Link href="/register" className="block text-center mt-8 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all">免费开始</Link>
+            </div>
+
+            {/* Pro - Recommended */}
+            <div className="bg-white rounded-2xl p-8 border-2 border-primary-500 shadow-xl relative transform scale-105">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary-500 to-accent-500 text-white text-xs font-semibold px-4 py-1 rounded-full">最受欢迎</div>
+              <h3 className="text-lg font-semibold text-gray-900">专业版</h3>
+              <p className="text-4xl font-bold text-gray-900 mt-4">¥99<span className="text-lg font-normal text-gray-500">/月</span></p>
+              <p className="text-sm text-gray-500 mt-1">适合内容创作者</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>5个平台连接</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>无限AI生成</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>SEO博客生成器</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>高级数据分析</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>API接入</li>
+              </ul>
+              <Link href="/register" className="block text-center mt-8 px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-primary-500/25 transition-all">立即订阅</Link>
+            </div>
+
+            {/* Enterprise */}
+            <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900">企业版</h3>
+              <p className="text-4xl font-bold text-gray-900 mt-4">¥299<span className="text-lg font-normal text-gray-500">/月</span></p>
+              <p className="text-sm text-gray-500 mt-1">适合团队和企业</p>
+              <ul className="mt-6 space-y-3">
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>无限平台连接</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>无限AI生成</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>全功能分析</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>专属支持</li>
+                <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>定制开发</li>
+              </ul>
+              <Link href="/register" className="block text-center mt-8 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all">联系我们</Link>
+            </div>
           </div>
         </div>
       </section>
