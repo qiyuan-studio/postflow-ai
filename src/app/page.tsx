@@ -32,6 +32,7 @@ export default function LandingPage() {
               <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">
                 登录
               </Link>
+              <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
               <Link href="/register"
                 className="text-sm font-medium bg-gradient-to-r from-primary-500 to-accent-500 text-white px-5 py-2 rounded-xl hover:shadow-lg hover:shadow-primary-500/25 transition-all">
                 免费开始
@@ -58,6 +59,7 @@ export default function LandingPage() {
               智能分析数据，让你专注于创作本身。
             </p>
             <div className="flex items-center justify-center gap-4">
+              <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
               <Link href="/register"
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-8 py-3.5 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-primary-500/25 transition-all">
                 免费开始使用
@@ -98,7 +100,39 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 bg-gray-50">
+            {/* Demo Preview */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            10秒生成一篇爆款文案
+          </h2>
+          <p className="text-lg text-gray-500 mb-8">
+            输入主题，选择平台，AI 自动生成适合小红书/抖音/公众号/推特的内容
+          </p>
+          <Link href="/demo"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-500 to-accent-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:shadow-primary-500/25 transition-all group">
+            <Sparkles className="w-5 h-5 group-hover:animate-pulse" />
+            免费体验 AI 创作
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+          <div className="mt-8 grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="text-2xl mb-1">📕</div>
+              <div className="text-sm font-medium text-gray-700">小红书</div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="text-2xl mb-1">🎵</div>
+              <div className="text-sm font-medium text-gray-700">抖音</div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="text-2xl mb-1">💬</div>
+              <div className="text-sm font-medium text-gray-700">公众号</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+<section id="pricing" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
@@ -119,6 +153,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm text-gray-400"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>无数据分析</li>
                 <li className="flex items-center gap-2 text-sm text-gray-400"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>无API接入</li>
               </ul>
+              <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
               <Link href="/register" className="block text-center mt-8 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all">免费开始</Link>
             </div>
 
@@ -135,6 +170,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>高级数据分析</li>
                 <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>API接入</li>
               </ul>
+              <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
               <Link href="/register" className="block text-center mt-8 px-6 py-3 bg-gradient-to-r from-primary-500 to-accent-500 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-primary-500/25 transition-all">立即订阅</Link>
             </div>
 
@@ -150,6 +186,7 @@ export default function LandingPage() {
                 <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>专属支持</li>
                 <li className="flex items-center gap-2 text-sm text-gray-600"><svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>定制开发</li>
               </ul>
+              <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
               <Link href="/register" className="block text-center mt-8 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all">联系我们</Link>
             </div>
           </div>
@@ -166,7 +203,8 @@ export default function LandingPage() {
             <p className="text-primary-100 text-lg mb-8 max-w-xl mx-auto">
               加入 PostFlow，用AI让你的内容创作效率提升10倍
             </p>
-            <Link href="/register"
+            <Link href="/demo" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">免费体验</Link>
+              <Link href="/register"
               className="inline-flex items-center gap-2 bg-white text-primary-700 px-8 py-3.5 rounded-xl font-semibold text-lg hover:shadow-xl transition-all">
               免费开始使用
               <ArrowRight className="w-5 h-5" />
