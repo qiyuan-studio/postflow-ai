@@ -18,6 +18,9 @@ import {
   Star,
   Shuffle,
   Webhook,
+  Layers,
+  Search,
+  GitCompare,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -25,8 +28,12 @@ const navItems = [
   { href: "/dashboard", label: "仪表盘", icon: LayoutDashboard },
   { href: "/dashboard/content", label: "内容管理", icon: FileText },
   { href: "/dashboard/content/new", label: "AI生成", icon: Wand2 },
+  { href: "/dashboard/batch-generate", label: "批量生成", icon: Layers },
+  { href: "/dashboard/templates", label: "内容模板", icon: FileText },
   { href: "/dashboard/content-adapt", label: "跨平台适配", icon: Shuffle },
   { href: "/dashboard/content-score", label: "内容评分", icon: Star },
+  { href: "/dashboard/seo", label: "SEO优化", icon: Search },
+  { href: "/dashboard/content-compare", label: "内容对比", icon: GitCompare },
   { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
   { href: "/dashboard/webhooks", label: "Webhook通知", icon: Webhook },
   { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },

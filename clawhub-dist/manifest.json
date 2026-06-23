@@ -1,0 +1,34 @@
+{
+  "name": "postflow-ai",
+  "version": "1.1.0",
+  "description": "PostFlow AI - AI内容中台：批量生成、智能模板、SEO优化、跨平台适配、内容对比 (闭源专业版)",
+  "author": "Qiyuan Studio",
+  "license": "Proprietary",
+  "type": "nextjs",
+  "min_clawhub_version": "1.0.0",
+  "features": [
+    "ai-content-generation",
+    "batch-content-generation",
+    "content-templates",
+    "content-scoring",
+    "seo-optimization",
+    "cross-platform-adaptation",
+    "content-compare",
+    "content-calendar",
+    "publish-scheduling",
+    "webhook-notifications",
+    "api-key-management",
+    "license-distribution",
+    "analytics-dashboard",
+    "open-api-v1"
+  ],
+  "pricing": {
+    "pro": 19900,
+    "enterprise": 49900
+  },
+  "requirements": {
+    "node": ">=18",
+    "memory": "1GB",
+    "storage": "500MB"
+  }
+}
