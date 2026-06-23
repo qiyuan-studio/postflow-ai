@@ -181,6 +181,15 @@ export default function NewContentPage() {
           </div>
         )}
 
+        {error && error.includes("已达上限") && (
+          <div className="bg-amber-50 text-amber-700 px-4 py-3 rounded-lg text-sm">
+            AI生成次数已达上限
+            <a href="/dashboard/settings" className="ml-2 text-accent-600 font-medium hover:underline">
+              升级专业版 →
+            </a>
+          </div>
+        )}
+
         <button
           onClick={handleGenerate}
           disabled={generating || !topic.trim()}

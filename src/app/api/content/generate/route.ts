@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import OpenAI from "openai";
+import { checkGenerationLimit } from "@/lib/subscription-guard";
 
 // DeepSeek is API-compatible with OpenAI SDK
 const client = new OpenAI({
@@ -23,6 +24,17 @@ export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check usage limits
+  const limitCheck = await checkGenerationLimit();
+  if (!limitCheck.allowed) {
+    return NextResponse.json({
+      error: "本月AI生成次数已达上限（" + limitCheck.limit + "次），请升级专业版获取更多额度",
+      limitReached: true,
+      used: limitCheck.used,
+      limit: limitCheck.limit,
+    }, { status: 403 });
   }
 
   try {
