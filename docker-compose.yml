@@ -1,18 +1,18 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  postflow:
+  postflow-ai:
     build: .
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=file:./data/dev.db
-      - AUTH_SECRET=${AUTH_SECRET}
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/dev.db
+      - AUTH_SECRET=${AUTH_SECRET:-postflow-prod-secret-change-me}
       - AUTH_URL=http://localhost:3000
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - NEXT_PUBLIC_STRIPE_KEY=${NEXT_PUBLIC_STRIPE_KEY}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-sk-your-deepseek-key}
+      - DEEPSEEK_BASE_URL=https://api.deepseek.com
+      - DEEPSEEK_MODEL=deepseek-v4-flash
     volumes:
       - postflow-data:/app/data
     restart: unless-stopped
