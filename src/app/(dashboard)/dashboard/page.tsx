@@ -1,11 +1,19 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { FileText, Calendar, BarChart3, Wand2 } from "lucide-react";
+import { FileText, Calendar, BarChart3, Wand2, Sparkles, Crown } from "lucide-react";
+import { getCurrentPlan, checkGenerationLimit } from "@/lib/subscription-guard";
 
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session?.user?.id;
+
+  const { plan, limits } = await getCurrentPlan();
+  let usageInfo: { used: number; limit: number } | null = null;
+  if (plan === "free") {
+    const limitCheck = await checkGenerationLimit();
+    usageInfo = { used: limitCheck.used, limit: limitCheck.limit };
+  }
 
   const [totalPosts, scheduledPosts, publishedPosts, draftPosts] =
     await Promise.all([
@@ -43,6 +51,74 @@ export default async function DashboardPage() {
         <StatCard label="已发布" value={publishedPosts} icon={BarChart3} color="green" />
         <StatCard label="待发布" value={scheduledPosts} icon={Calendar} color="purple" />
         <StatCard label="草稿" value={draftPosts} icon={FileText} color="amber" />
+      </div>
+
+      {/* Usage & Upgrade */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white rounded-2xl border border-primary-100 p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-primary-900">本月使用量</h3>
+            {plan === "free" ? (
+              <span className="text-xs px-2 py-1 bg-amber-100 text-amber-700 rounded-full font-medium">免费版</span>
+            ) : (
+              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                {plan === "pro" ? "专业版" : "企业版"}
+              </span>
+            )}
+          </div>
+          {plan === "free" && usageInfo ? (
+            <div>
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-primary-500">AI 生成次数</span>
+                <span className="text-primary-700 font-medium">{usageInfo.used} / {usageInfo.limit}</span>
+              </div>
+              <div className="w-full bg-primary-100 rounded-full h-2.5">
+                <div
+                  className={`h-2.5 rounded-full transition-all ${
+                    usageInfo.used >= usageInfo.limit
+                      ? "bg-red-500"
+                      : usageInfo.used >= usageInfo.limit * 0.8
+                      ? "bg-amber-500"
+                      : "bg-accent-500"
+                  }`}
+                  style={{ width: `${Math.min(100, (usageInfo.used / usageInfo.limit) * 100)}%` }}
+                />
+              </div>
+              {usageInfo.used >= usageInfo.limit && (
+                <Link
+                  href="/dashboard/settings"
+                  className="mt-3 inline-flex items-center gap-1 text-sm text-accent-600 font-medium hover:underline"
+                >
+                  <Crown className="w-4 h-4" />
+                  升级专业版获取更多额度 →
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm text-primary-500">
+              <Sparkles className="w-4 h-4 text-accent-500" />
+              无限 AI 生成次数
+            </div>
+          )}
+        </div>
+
+        <Link
+          href="/dashboard/blog"
+          className="bg-white rounded-2xl border border-primary-100 p-5 hover:shadow-lg transition-all group"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-primary-900">SEO 博客生成</h3>
+            <span className="text-xs bg-primary-100 text-primary-600 px-2 py-1 rounded-full group-hover:bg-accent-100 group-hover:text-accent-700 transition-colors">
+              新功能
+            </span>
+          </div>
+          <p className="text-sm text-primary-500">
+            用AI自动生成搜索引擎友好的高质量博客文章，提升网站流量
+          </p>
+          <div className="mt-3 text-sm text-accent-600 font-medium">
+            立即使用 →
+          </div>
+        </Link>
       </div>
 
       {/* Quick Actions */}

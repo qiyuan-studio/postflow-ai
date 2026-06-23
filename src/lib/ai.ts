@@ -11,12 +11,7 @@ export async function generateContent(request: AIContentRequest): Promise<AICont
 }
 
 export async function generateImage(prompt: string): Promise<string> {
-  const response = await fetch('/api/ai/image', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  });
-  if (!response.ok) throw new Error('Image generation failed');
-  const data = await response.json();
-  return data.url;
+  // 图片生成功能待接入外部API后启用
+  console.warn('Image generation: no API endpoint configured');
+  return '';
 }

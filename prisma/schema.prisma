@@ -195,3 +195,25 @@ model PublishLog {
   @@index([contentPostId])
   @@index([status])
 }
+// ===== 授权码系统 (独立部署) =====
+model License {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  plan      String   // pro, enterprise
+  status    String   @default("active") // active, used, revoked, expired
+  maxActivations Int  @default(1)
+  currentActivations Int @default(0)
+  activatedAt  DateTime?
+  expiresAt    DateTime?
+  buyerEmail   String?
+  buyerName    String?
+  orderId      String?
+  price        Float?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([key])
+  @@index([status])
+}
+
