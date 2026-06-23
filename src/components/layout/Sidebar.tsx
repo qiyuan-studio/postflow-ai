@@ -15,6 +15,8 @@ import {
   TrendingUp,
   ChevronLeft,
   ChevronRight,
+  Star,
+  Shuffle,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -22,6 +24,8 @@ const navItems = [
   { href: "/dashboard", label: "仪表盘", icon: LayoutDashboard },
   { href: "/dashboard/content", label: "内容管理", icon: FileText },
   { href: "/dashboard/content/new", label: "AI生成", icon: Wand2 },
+  { href: "/dashboard/content-adapt", label: "跨平台适配", icon: Shuffle },
+  { href: "/dashboard/content-score", label: "内容评分", icon: Star },
   { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
   { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },
   { href: "/dashboard/video", label: "短视频脚本", icon: Video },
@@ -29,7 +33,6 @@ const navItems = [
   { href: "/dashboard/blog", label: "博客生成", icon: PenLine },
   { href: "/dashboard/settings", label: "设置", icon: Settings },
   { href: "/dashboard/api-keys", label: "API密钥", icon: Key },
-  { href: "/dashboard/licenses", label: "授权管理", icon: Key },
 ];
 
 export function Sidebar() {

@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Share2, BarChart3, Bot, Globe, Zap } from 'lucide-react';
+import { ArrowRight, Sparkles, Share2, BarChart3, Bot, Globe, Zap, Star, Shuffle, Video, TrendingUp } from 'lucide-react';
 
 const features = [
-  { icon: Bot, title: 'AI 内容创作', desc: '基于AI自动生成适配各平台风格的文案、图片和视频脚本' },
-  { icon: Share2, title: '一键多平台发布', desc: '同时发布到抖音、小红书、X(Twitter)、Reddit等主流平台' },
+  { icon: Bot, title: 'AI 内容创作', desc: '基于AI自动生成适配各平台风格的文案、视频脚本和SEO博客' },
+  { icon: Shuffle, title: '跨平台内容适配', desc: '一篇内容自动适配小红书/抖音/X/知乎等主流平台风格' },
+  { icon: Star, title: 'AI 内容评分', desc: '多维度分析内容质量，给出可执行的改进建议' },
+  { icon: Video, title: '短视频脚本工厂', desc: 'AI生成爆款短视频脚本，含分镜、口播词和画面描述' },
+  { icon: TrendingUp, title: '爆款选题挖掘', desc: 'AI分析各平台热点趋势，为你推荐高流量选题方向' },
   { icon: BarChart3, title: '智能数据分析', desc: '实时追踪各平台数据，AI自动优化发布策略' },
-  { icon: Globe, title: '跨平台管理', desc: '统一管理所有社交账号，告别来回切换' },
-  { icon: Zap, title: '批量定时发布', desc: '内容日历管理，智能选择最佳发布时间' },
-  { icon: Sparkles, title: 'AI 评论互动', desc: 'AI自动回复评论，提升粉丝互动率' },
 ];
 
 export default function LandingPage() {

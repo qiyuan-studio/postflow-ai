@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyApiKey } from "@/lib/api-auth";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
+// 使用 DeepSeek（API 兼容 OpenAI SDK）
+const client = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY || "",
+  baseURL: process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com",
 });
 
-// POST /api/open/v1/content/generate - AI生成内容
+// POST /api/open/v1/content/generate - AI生成内容（开放API）
 export async function POST(request: NextRequest) {
   const auth = await verifyApiKey(request);
   if (auth.error) {
@@ -37,8 +39,8 @@ export async function POST(request: NextRequest) {
 - ${keywords?.length ? `关键词：${keywords.join(", ")}` : ""}
 - 输出格式：JSON { "title": "标题", "content": "正文内容", "hashtags": ["标签1", "标签2"], "suggestions": ["建议1"] }`;
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+    const response = await client.chat.completions.create({
+      model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `主题：${topic}\n平台：${platform || "通用"}\n语气：${tone || "专业"}` },
