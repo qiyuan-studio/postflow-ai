@@ -17,6 +17,9 @@ const platformEmojis: Record<string, string> = {
   twitter: "🐦",
   reddit: "👽",
   tiktok: "📱",
+  zhihu: "💡",
+  weixin: "📰",
+  weibo: "🔴",
 };
 
 const platformLabels: Record<string, string> = {
@@ -25,6 +28,9 @@ const platformLabels: Record<string, string> = {
   twitter: "X",
   reddit: "Reddit",
   tiktok: "TikTok",
+  zhihu: "知乎",
+  weixin: "公众号",
+  weibo: "微博",
 };
 
 const statusLabels: Record<string, string> = {
@@ -69,7 +75,8 @@ export function ContentListClient({ posts: initialPosts }: { posts: Post[] }) {
     return true;
   });
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!confirm("确定要删除吗？")) return;
     try {
       const res = await fetch(`/api/content/${id}`, { method: "DELETE" });
@@ -118,11 +125,12 @@ export function ContentListClient({ posts: initialPosts }: { posts: Post[] }) {
           {filtered.map((post) => (
             <div
               key={post.id}
-              className="p-4 hover:bg-primary-50/50 transition-colors"
+              onClick={() => router.push(`/dashboard/content/${post.id}`)}
+              className="p-4 hover:bg-accent-50/50 transition-colors cursor-pointer group"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-primary-900 truncate">
+                  <h3 className="font-medium text-primary-900 truncate group-hover:text-accent-700 transition-colors">
                     {post.title || "无标题"}
                   </h3>
                   <p className="text-sm text-primary-500 mt-1 line-clamp-2">
@@ -148,12 +156,19 @@ export function ContentListClient({ posts: initialPosts }: { posts: Post[] }) {
                     <span className="text-xs text-primary-300">
                       {new Date(post.createdAt).toLocaleDateString("zh-CN")}
                     </span>
+                    {post.scheduledAt && (
+                      <span className="text-xs text-purple-500 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(post.scheduledAt).toLocaleDateString("zh-CN")}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 ml-4">
                   <button
-                    onClick={() => handleDelete(post.id)}
+                    onClick={(e) => handleDelete(post.id, e)}
                     className="p-2 text-primary-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    title="删除"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

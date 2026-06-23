@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Star,
   Shuffle,
+  Webhook,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -27,12 +28,13 @@ const navItems = [
   { href: "/dashboard/content-adapt", label: "跨平台适配", icon: Shuffle },
   { href: "/dashboard/content-score", label: "内容评分", icon: Star },
   { href: "/dashboard/calendar", label: "发布日历", icon: Calendar },
+  { href: "/dashboard/webhooks", label: "Webhook通知", icon: Webhook },
   { href: "/dashboard/analytics", label: "数据分析", icon: BarChart3 },
   { href: "/dashboard/video", label: "短视频脚本", icon: Video },
   { href: "/dashboard/trending", label: "爆款选题", icon: TrendingUp },
   { href: "/dashboard/blog", label: "博客生成", icon: PenLine },
-  { href: "/dashboard/settings", label: "设置", icon: Settings },
   { href: "/dashboard/api-keys", label: "API密钥", icon: Key },
+  { href: "/dashboard/settings", label: "设置", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -56,9 +58,10 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || 
+            (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}
